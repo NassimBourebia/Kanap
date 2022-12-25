@@ -42,7 +42,7 @@ function addProducts(data) {
 
   function makeAnchor (id) {                    
     const anchor = document.createElement('a');                                             
-    anchor.href = "./product.html?id" + id
+    anchor.href = "./product.html?id=" + id
     return anchor 
    }
 
