@@ -1,6 +1,7 @@
 const idString = window.location.search            //Analyse
 const urlParamss = new URLSearchParams(idString); //window.location.search peux être mis directement en parametre de la function 
 const id = urlParamss.get("id")
+let priceForLocalStorage = 0;    //Variable globale pour le prix 
 
 fetch(`http://localhost:3000/api/products/${id}`) // Utiliser String interpolation avec `` 
 .then(response => response.json())
@@ -10,12 +11,15 @@ fetch(`http://localhost:3000/api/products/${id}`) // Utiliser String interpolati
 function displayData (kanap) {
 
                                              //Ce code peux être écrit d'une maniére plus compact 
+                                           
     const name = kanap.name;                //---> const {_id, name, imageUrl, description, colors, price, altTxt} = kanap ; 
     const imageUrl = kanap.imageUrl; 
     const description = kanap.description;
     const colors = kanap.colors;
     const price = kanap.price;
     const altTxt = kanap.altTxt; 
+    priceForLocalStorage = price;
+   
 
     makeImage(altTxt, imageUrl); 
     makeTitle(name);
@@ -66,6 +70,31 @@ function displayData (kanap) {
             });
         }
      }
+
+     //Ajout des EVENTS
+
+     const button = document.querySelector("#addToCart");
+     
+     button.addEventListener("click", (e) => {
+     
+        const color = document.querySelector("#colors").value
+        const quantity = document.querySelector ("#quantity").value
+
+
+        const objetData = {
+
+            id : id, 
+            color : color,
+            quantity : Number (quantity),
+            price : Number(priceForLocalStorage) 
+        }
+
+
+        localStorage.setItem(id, JSON.stringify(objetData)); 
+
+     })
+
+
 
 
 
