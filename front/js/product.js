@@ -82,7 +82,7 @@ function displayData (kanap) {
      
             const color = document.querySelector("#colors").value
             const quantity = document.querySelector ("#quantity").value
-            if (checkIfCartValid (color, quantity)) return //Fonction si l'utilisateur ne sélectionne pas d'options
+            if (orderValid(color, quantity)) return //Fonction si l'utilisateur ne sélectionne pas d'options
             addCart(color, quantity)
 
             window.location.href = "cart.html"; 
@@ -104,7 +104,7 @@ function displayData (kanap) {
         localStorage.setItem(id, JSON.stringify(objetData));   //Pour le localStorage il faut que les data soit en JSON 
 
      }
-     function checkIfCartValid(color, quantity) {
+     function orderValid(color, quantity) {
 
         if (color == null || color == "" || quantity == 0 || quantity == "") {
            
