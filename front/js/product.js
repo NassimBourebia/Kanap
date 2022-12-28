@@ -77,27 +77,33 @@ function displayData (kanap) {
      //Ajout des EVENTS
 
      const button = document.querySelector("#addToCart");
-     if (button != null) {
-        button.addEventListener("click", (e) => {
-     
-            const color = document.querySelector("#colors").value
-            const quantity = document.querySelector ("#quantity").value
-            if (orderValid(color, quantity)) return //Fonction si l'utilisateur ne sélectionne pas d'options
-            addCart(color, quantity)
-
-            window.location.href = "cart.html"; 
     
-         })
-     }
+     button.addEventListener("click", clickOnButton)  
+ 
+
      
-     function addCart(color, quantity) {
+
+
+     function clickOnButton() {
+
+        const color = document.querySelector("#colors").value
+        const quantity = document.querySelector ("#quantity").value
+
+        if (orderValid(color, quantity)) return //Fonction si l'utilisateur ne sélectionne pas d'options
+       
+        addOrder(color, quantity)
+        goToCartPage ()
+     }
+
+
+     function addOrder(color, quantity) {
         const objetData = {
     
             id : id, 
             color : color,
             quantity : Number (quantity),
             price : Number(priceForLocalStorage),
-            imgeUrl : imgUrl,
+            imageUrl : imgUrl,
             altTxt : altText
         }
 
@@ -113,7 +119,7 @@ function displayData (kanap) {
         }
        }  
        
-   
+    function goToCartPage () {  window.location.href = "cart.html";   }
 
 
 
