@@ -2,7 +2,7 @@ const idString = window.location.search            //Analyse
 const urlParamss = new URLSearchParams(idString); //window.location.search peux être mis directement en parametre de la function 
 const id = urlParamss.get("id")
 let priceForLocalStorage = 0;    //Variable globale pour le prix 
-
+let imgUrl,altText; 
 fetch(`http://localhost:3000/api/products/${id}`) // Utiliser String interpolation avec `` 
 .then(response => response.json())
 .then(response => displayData(response));
@@ -19,6 +19,8 @@ function displayData (kanap) {
     const price = kanap.price;
     const altTxt = kanap.altTxt; 
     priceForLocalStorage = price;
+    imgUrl = imageUrl; 
+    altText = altTxt; 
    
 
     makeImage(altTxt, imageUrl); 
@@ -26,6 +28,7 @@ function displayData (kanap) {
     makePrice(price); 
     makeDescription(description);
     makeColors(colors);
+   
    
 
 }
@@ -70,29 +73,48 @@ function displayData (kanap) {
             });
         }
      }
-
+     
      //Ajout des EVENTS
 
      const button = document.querySelector("#addToCart");
+     if (button != null) {
+        button.addEventListener("click", (e) => {
      
-     button.addEventListener("click", (e) => {
+            const color = document.querySelector("#colors").value
+            const quantity = document.querySelector ("#quantity").value
+            if (checkIfCartValid (color, quantity)) return //Fonction si l'utilisateur ne sélectionne pas d'options
+            addCart(color, quantity)
+
+            window.location.href = "cart.html"; 
+    
+         })
+     }
      
-        const color = document.querySelector("#colors").value
-        const quantity = document.querySelector ("#quantity").value
-
-
+     function addCart(color, quantity) {
         const objetData = {
-
+    
             id : id, 
             color : color,
             quantity : Number (quantity),
-            price : Number(priceForLocalStorage) 
+            price : Number(priceForLocalStorage),
+            imgeUrl : imgUrl,
+            altTxt : altText
         }
 
+        localStorage.setItem(id, JSON.stringify(objetData));   //Pour le localStorage il faut que les data soit en JSON 
 
-        localStorage.setItem(id, JSON.stringify(objetData)); 
+     }
+     function checkIfCartValid(color, quantity) {
 
-     })
+        if (color == null || color == "" || quantity == 0 || quantity == "") {
+           
+           alert("Veuillez sélectionner une couleur et une quantité"); 
+           return true    //Cette fonction return true pour que la valeurs soit récupérer plus haut
+        }
+       }  
+       
+   
+
 
 
 
