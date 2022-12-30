@@ -2,7 +2,7 @@ const idString = window.location.search            //Analyse
 const urlParamss = new URLSearchParams(idString); //window.location.search peux être mis directement en parametre de la function 
 const id = urlParamss.get("id")
 let priceForLocalStorage = 0;    //Variable globale pour le prix 
-let imgUrl,altText; 
+let imgUrl,altText, nameArticle; 
 fetch(`http://localhost:3000/api/products/${id}`) // Utiliser String interpolation avec `` 
 .then(response => response.json())
 .then(response => displayData(response));
@@ -21,7 +21,7 @@ function displayData (kanap) {
     priceForLocalStorage = price;
     imgUrl = imageUrl; 
     altText = altTxt; 
-   
+    nameArticle = name; 
 
     makeImage(altTxt, imageUrl); 
     makeTitle(name);
@@ -104,7 +104,8 @@ function displayData (kanap) {
             quantity : Number (quantity),
             price : Number(priceForLocalStorage),
             imageUrl : imgUrl,
-            altTxt : altText
+            altTxt : altText,
+            name : nameArticle
         }
 
         localStorage.setItem(id, JSON.stringify(objetData));   //Pour le localStorage il faut que les data soit en JSON 

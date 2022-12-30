@@ -70,7 +70,17 @@ function makeSettings(item){
     settings.classList.add("cart__item__content__settings")
 
     quantityToSettings(settings,item)
+    deletToSettings(settings)
     return settings
+
+}
+function deletToSettings(settings){
+    const div = document.createElement("div")
+    div.classList.add("cart__item__content__settings__delete")
+    const p = document.createElement("p")
+    p.textContent = "Supprimer"; 
+    div.appendChild(p)
+    settings.appendChild(div)
 
 }
 function quantityToSettings(settings, item){
