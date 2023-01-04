@@ -3,9 +3,13 @@ const urlParamss = new URLSearchParams(idString); //window.location.search peux 
 const id = urlParamss.get("id")
 let priceForLocalStorage = 0;    //Variable globale pour le prix 
 let imgUrl,altText, nameArticle; 
+
+const products = JSON.parse(localStorage.getItem('product') || '[]') 
+
 fetch(`http://localhost:3000/api/products/${id}`) // Utiliser String interpolation avec `` 
 .then(response => response.json())
 .then(response => displayData(response));
+
 
 
 function displayData (kanap) {
@@ -85,8 +89,9 @@ function displayData (kanap) {
 
 
      function clickOnButton() {
-
-        const color = document.querySelector("#colors").value
+        
+        const selectColor = document.querySelector("#colors");
+        const color = selectColor.value
         const quantity = document.querySelector ("#quantity").value
 
         if (orderValid(color, quantity)) return //Fonction si l'utilisateur ne sélectionne pas d'options
@@ -101,14 +106,25 @@ function displayData (kanap) {
     
             id : id, 
             color : color,
-            quantity : Number (quantity),
-            price : Number(priceForLocalStorage),
-            imageUrl : imgUrl,
-            altTxt : altText,
-            name : nameArticle
+            quantity : parseInt(quantity),
         }
 
-        localStorage.setItem(id, JSON.stringify(objetData));   //Pour le localStorage il faut que les data soit en JSON 
+       
+
+         const index = products.findIndex((product) => product._id === objetData.id || product.color === objetData.color);
+          if (index !== -1){
+
+                products[index].quantity = objetData.quantity;
+
+            } else {
+
+            products.push(objetData);
+
+            }
+
+        localStorage.setItem('product', JSON.stringify(products));
+      
+      //  localStorage.setItem(id, JSON.stringify(objetData));   //Pour le localStorage il faut que les data soit en JSON 
 
      }
      function orderValid(color, quantity) {

@@ -1,44 +1,53 @@
+ 
 
-const cart = [];
+const cart = JSON.parse(localStorage.getItem('product') || "[]");
 
-getItemFromLocalStorage ()
-cart.forEach((item) => displayItem(item))
+cart.forEach(item => {
+    const id = item.id;
+
+ fetch(`http://localhost:3000/api/products/${id}`)
+  .then(response => response.json())
+  .then(data => {
+    const product = { ...data, color: item.color, quantity: item.quantity } 
+
+    displayItem(product); 
+  });
+});
 
 
-function getItemFromLocalStorage () {
-    const numberItem  = localStorage.length
-    for(let i = 0; i < numberItem; i ++) {
+function displayItem (product) {
 
-        const item = localStorage.getItem(localStorage.key(i))
-        const itemToObject = JSON.parse(item) //JSON.parse permet de prendre la string du storage et la mettre en objet json (contraire de JSON.stingify)
-        cart.push(itemToObject)
-    }
-}
-
-function displayItem (item) {
-
-    const article = makeArticle(item); 
-    const divImage = makeDivImage(item);
+    const article = makeArticle(product); 
+    const divImage = makeDivImage(product);
     article.appendChild(divImage)
 
-    const cardItemContent = makeCartContent(item);
+    const cardItemContent = makeCartContent(product);
     article.appendChild(cardItemContent)
     displayArticle(article)
+
+    function displayArticle() {
+
+        document.querySelector("#cart__items").appendChild(article);
+              
+    }
+    displayTotalQuantity(product)
 }
 
+function displayTotalQuantity(product) {
+    const totalQuantity = document.querySelector("#totalQuantity"); 
+    totalQuantity.textContent = product.quantity
+  }
 
-function displayArticle(article) {
-
-    document.querySelector("#cart__items").appendChild(article);     
-}
 
 
-function makeCartContent(item){
+
+
+function makeCartContent(product){
     const cardItemContent = document.createElement("div")
     cardItemContent.classList.add("cart__item__content")
 
-    const description = makeDescription(item); 
-    const settings = makeSettings(item); 
+    const description = makeDescription(product); 
+    const settings = makeSettings(product); 
 
     cardItemContent.appendChild(description)
     cardItemContent.appendChild(settings)
@@ -47,16 +56,16 @@ function makeCartContent(item){
    
 }
 
-function makeDescription(item) {
+function makeDescription(product) {
     const description = document.createElement("div");
     description.classList.add("cart__item__content__description");
   
     const h2 = document.createElement("h2")
-    h2.textContent = item.name;
+    h2.textContent = product.name;
     const p = document.createElement("p")
-    p.textContent = item.color;
+    p.textContent = product.color;
     let pPrice = document.createElement("p")
-    pPrice.textContent = item.price + " €";
+    pPrice.textContent = product.price + " €";
   
     description.appendChild(h2);
     description.appendChild(p);
@@ -64,12 +73,12 @@ function makeDescription(item) {
     return description
 }
 
-function makeSettings(item){
+function makeSettings(product){
 
     const settings = document.createElement("div")
     settings.classList.add("cart__item__content__settings")
 
-    quantityToSettings(settings,item)
+    quantityToSettings(settings,product)
     deletToSettings(settings)
     return settings
 
@@ -82,8 +91,15 @@ function deletToSettings(settings){
     div.appendChild(p)
     settings.appendChild(div)
 
+
+    p.addEventListener('click', function () {
+        
+    })
+
 }
-function quantityToSettings(settings, item){
+
+
+function quantityToSettings(settings, product){
 
     const quantity = document.createElement("div")
    quantity.classList.add("cart__item__content__settings__quantity")
@@ -97,27 +113,28 @@ function quantityToSettings(settings, item){
    input.name = "itemQuantity"; 
    input.min = "1"
    input.max = "100"
-   input.value = item.quantity
-   settings.appendChild(input)
+   input.value = parseInt(product.quantity)
+   quantity.appendChild(input)
+   settings.appendChild(quantity)
    return settings
 }
 
 
-function makeArticle (item) {
+function makeArticle (product) {
     const article = document.createElement("article"); 
     article.classList.add("card__item")
-    article.dataset.id = item.id;
-    article.dataset.id = item.color;
+    article.dataset.id = product.id;
+    article.dataset.id = product.color;
     return article
 }
 
-function makeDivImage(item) {
+function makeDivImage(product) {
     const div = document.createElement("div")
     div.classList.add("cart__item__img")
 
     const image = document.createElement("img"); 
-    image.src = item.imageUrl; 
-    image.alt = item.altTxt;
+    image.src = product.imageUrl; 
+    image.alt = product.altTxt;
     div.appendChild(image)
     return div 
 }
