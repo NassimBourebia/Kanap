@@ -1,6 +1,6 @@
- 
-
-const cart = JSON.parse(localStorage.getItem('product') || "[]");
+cart = JSON.parse(localStorage.getItem('product') || "[]");
+let totalQuantity = 0; 
+let totalPrice = 0; 
 
 cart.forEach(item => {
     const id = item.id;
@@ -8,9 +8,10 @@ cart.forEach(item => {
  fetch(`http://localhost:3000/api/products/${id}`)
   .then(response => response.json())
   .then(data => {
-    const product = { ...data, color: item.color, quantity: item.quantity } 
+    const product = { ...data, color: item.color, quantity: item.quantity, } 
 
     displayItem(product); 
+  
   });
 });
 
@@ -28,17 +29,24 @@ function displayItem (product) {
     function displayArticle() {
 
         document.querySelector("#cart__items").appendChild(article);
-              
+             
     }
     displayTotalQuantity(product)
+
+
+
 }
 
+
 function displayTotalQuantity(product) {
-    const totalQuantity = document.querySelector("#totalQuantity"); 
-    totalQuantity.textContent = product.quantity
+    
+    totalQuantity += product.quantity; 
+    totalPrice += product.price * product.quantity; 
+    document.querySelector("#totalQuantity").textContent = totalQuantity; 
+    document.querySelector("#totalPrice").textContent = totalPrice; 
+     
   }
-
-
+ 
 
 
 
@@ -65,7 +73,7 @@ function makeDescription(product) {
     const p = document.createElement("p")
     p.textContent = product.color;
     let pPrice = document.createElement("p")
-    pPrice.textContent = product.price + " €";
+    pPrice.textContent = product.price;
   
     description.appendChild(h2);
     description.appendChild(p);
@@ -92,10 +100,6 @@ function deletToSettings(settings){
     settings.appendChild(div)
 
 
-    p.addEventListener('click', function () {
-        
-    })
-
 }
 
 
@@ -114,10 +118,40 @@ function quantityToSettings(settings, product){
    input.min = "1"
    input.max = "100"
    input.value = parseInt(product.quantity)
+   input.addEventListener("input", () => {
+    
+    updateQuantity( product._id,input.value) 
+    updatePrice(product._id, product.price)})
+   
    quantity.appendChild(input)
    settings.appendChild(quantity)
    return settings
 }
+
+
+function updateQuantity(id, newQuantity) {
+
+    const item = cart.find(item => item.id === id);
+    item.quantity = newQuantity;
+   
+   
+   
+    totalQuantity = cart.reduce((acc, item) => acc + parseInt(item.quantity), 0);
+    document.querySelector("#totalQuantity").textContent = parseInt(totalQuantity);  
+}
+
+function updatePrice(id, price) {
+
+
+    const item = cart.find(item => item.id === id);
+    item.price = price;
+    console.log(item.price);
+
+    
+    totalPrice = cart.reduce((acc, item) => acc + parseInt(item.quantity) * (price), 0);
+     document.querySelector("#totalPrice").textContent = totalPrice;
+}
+
 
 
 function makeArticle (product) {
@@ -138,4 +172,3 @@ function makeDivImage(product) {
     div.appendChild(image)
     return div 
 }
-
