@@ -1,5 +1,5 @@
 let cart = JSON.parse(localStorage.getItem('product') || "[]");
-console.log(cart.map(item => item));
+
 let totalQuantity = 0; 
 let totalPrice = 0; 
 
@@ -116,7 +116,7 @@ function quantityToSettings(settings, product){
    
    input.addEventListener("input", () => {
 
-    updateQuantity( product._id, parseInt(input.value)) 
+    updateQuantity( product._id, parseInt(input.value), product.color) 
         updatePrice()
     })
    
@@ -126,25 +126,29 @@ function quantityToSettings(settings, product){
 }
 
 
-function updateQuantity(id, newQuantity) {
+function updateQuantity(id, newQuantity, color) {
 
     const item = cart.find(item => item._id === id);
     item.quantity = newQuantity;
-   
     totalQuantity = cart.reduce((total, item) => total + item.quantity, 0);
     document.querySelector("#totalQuantity").textContent = totalQuantity; 
-    updateQuantityInLocalStorage(id, newQuantity)
+    updateQuantityInLocalStorage(id, newQuantity, color)
 }
 
-function updateQuantityInLocalStorage(id, newQuantity) {
+function updateQuantityInLocalStorage(id,newQuantity, color) {
     let cart = JSON.parse(localStorage.getItem('product') || "[]");
     cart = cart.map(item => {
-        if (item._id === id) {
-            item.quantity = newQuantity;
+        if (item.id === id && item.color === color) {
+            return{
+                ...item,
+                quantity:newQuantity
+            }
         }
-        return item;
+       return item
     });
+    console.log(cart);
     localStorage.setItem("product", JSON.stringify(cart));
+   
 }
 
 
