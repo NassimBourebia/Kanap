@@ -1,20 +1,22 @@
-cart = JSON.parse(localStorage.getItem('product') || "[]");
+let cart = JSON.parse(localStorage.getItem('product') || "[]");
+console.log(cart.map(item => item));
 let totalQuantity = 0; 
 let totalPrice = 0; 
 
-cart.forEach(item => {
-    const id = item.id;
+async function getProductsCart(cart) {
+    return await Promise.all(cart.map(async item => {
+        const id = item.id;
 
- fetch(`http://localhost:3000/api/products/${id}`)
-  .then(response => response.json())
-  .then(data => {
-    const product = { ...data, color: item.color, quantity: item.quantity, } 
+         return await fetch(`http://localhost:3000/api/products/${id}`)
+                        .then(response => response.json())
+                        .then(data => { return { ...data, color: item.color, quantity: item.quantity, } } );
+    }));
+}
 
-    displayItem(product); 
-  
-  });
-});
+cart = await getProductsCart(cart);
 
+
+cart.map(product => displayItem(product)).join("");
 
 function displayItem (product) {
 
@@ -24,16 +26,9 @@ function displayItem (product) {
 
     const cardItemContent = makeCartContent(product);
     article.appendChild(cardItemContent)
-    displayArticle(article)
+    document.querySelector("#cart__items").appendChild(article);
 
-    function displayArticle() {
-
-        document.querySelector("#cart__items").appendChild(article);
-             
-    }
     displayTotalQuantity(product)
-
-
 
 }
 
@@ -46,7 +41,7 @@ function displayTotalQuantity(product) {
     document.querySelector("#totalPrice").textContent = totalPrice; 
      
   }
- 
+
 
 
 
@@ -117,11 +112,13 @@ function quantityToSettings(settings, product){
    input.name = "itemQuantity"; 
    input.min = "1"
    input.max = "100"
-   input.value = parseInt(product.quantity)
+   input.value = product.quantity
+   
    input.addEventListener("input", () => {
-    
-    updateQuantity( product._id,input.value) 
-    updatePrice(product._id, product.price)})
+
+    updateQuantity( product._id, parseInt(input.value)) 
+        updatePrice()
+    })
    
    quantity.appendChild(input)
    settings.appendChild(quantity)
@@ -131,28 +128,32 @@ function quantityToSettings(settings, product){
 
 function updateQuantity(id, newQuantity) {
 
-    const item = cart.find(item => item.id === id);
+    const item = cart.find(item => item._id === id);
     item.quantity = newQuantity;
    
-   
-   
-    totalQuantity = cart.reduce((acc, item) => acc + parseInt(item.quantity), 0);
-    document.querySelector("#totalQuantity").textContent = parseInt(totalQuantity);  
+    totalQuantity = cart.reduce((total, item) => total + item.quantity, 0);
+    document.querySelector("#totalQuantity").textContent = totalQuantity; 
+    updateQuantityInLocalStorage(id, newQuantity)
 }
 
-function updatePrice(id, price) {
+function updateQuantityInLocalStorage(id, newQuantity) {
+    let cart = JSON.parse(localStorage.getItem('product') || "[]");
+    cart = cart.map(item => {
+        if (item._id === id) {
+            item.quantity = newQuantity;
+        }
+        return item;
+    });
+    localStorage.setItem("product", JSON.stringify(cart));
+}
 
 
-    const item = cart.find(item => item.id === id);
-    item.price = price;
-    console.log(item.price);
 
-    
-    totalPrice = cart.reduce((acc, item) => acc + parseInt(item.quantity) * (price), 0);
+
+function updatePrice() {
+    totalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0); //function accumulateur
      document.querySelector("#totalPrice").textContent = totalPrice;
 }
-
-
 
 function makeArticle (product) {
     const article = document.createElement("article"); 
