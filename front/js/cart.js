@@ -235,10 +235,14 @@ function submit(e) {
         
      })
      .then((res) => res.json())
-     .then((data) => console.log(data))
-    
-    
-    }
+     .then((data) => {
+        const orderId = data.orderId
+        window.location.href = "/front/html/confirmation.html" + "?orderId=" + orderId
+       return console.log(data)
+
+     })
+     .catch((err) => console.log(err));
+}
 
   function formInvalid() {
   const form = document.querySelector(".cart__order__form")
@@ -260,7 +264,7 @@ function submit(e) {
    if (regex.test(email) === false) {
     alert("Veuillez saisir une adresse e-mail valide")
     return true
-    
+
    }
    return false
    }
@@ -287,7 +291,7 @@ function makeRequestBody() {
     }
    
     return body
- }
+}
 
 
 
