@@ -2,22 +2,24 @@ let cart = JSON.parse(localStorage.getItem('product') || "[]");
 let totalQuantity = 0;
 let totalPrice = 0;
 
-async function getProductsCart(cart) {
+// Récupère les produits du panier depuis l'API en utilisant l'ID stocké en localstorage
+async function getProductsCart (cart) {
     return await Promise.all(cart.map(async item => {
         const id = item.id;
-
+        // Fait une requête à l'API pour récupérer les informations sur le produit
         return await fetch(`http://localhost:3000/api/products/${id}`)
             .then(response => response.json())
+            // Renvoie un objet avec les informations sur le produit, la couleur et la quantité
             .then(data => { return { ...data, color: item.color, quantity: item.quantity, } });
     }));
 }
 
-cart = await getProductsCart(cart);
-
+// Récupère les produits du panier et les affiche sur la page
+cart = await getProductsCart (cart);
 
 cart.map(product => displayItem(product)).join("");
 
-function displayItem(product) {
+function displayItem (product) {
 
     const article = makeArticle(product);
     const divImage = makeDivImage(product);
@@ -31,8 +33,8 @@ function displayItem(product) {
   
 }
 
-
-function displayTotalQuantity(product) {
+// Met à jour le total de la quantité et du prix pour tous les produits dans le panier
+function displayTotalQuantity (product) {
 
     totalQuantity += product.quantity;
     totalPrice += product.price * product.quantity;
@@ -41,10 +43,7 @@ function displayTotalQuantity(product) {
 
 }
 
-
-
-
-function makeCartContent(product) {
+function makeCartContent (product) {
     const cardItemContent = document.createElement("div")
     cardItemContent.classList.add("cart__item__content")
 
@@ -57,8 +56,8 @@ function makeCartContent(product) {
 
 
 }
-
-function makeDescription(product) {
+// Crée un élément div qui contiendra toutes les informations de l'élément du panier
+function makeDescription (product) {
     const description = document.createElement("div");
     description.classList.add("cart__item__content__description");
 
@@ -74,8 +73,8 @@ function makeDescription(product) {
     description.appendChild(pPrice);
     return description
 }
-
-function makeSettings(product) {
+// Crée un élément div qui contiendra la description de l'élément du panier (nom, couleur, prix)
+function makeSettings (product) {
 
     const settings = document.createElement("div")
     settings.classList.add("cart__item__content__settings")
@@ -85,7 +84,8 @@ function makeSettings(product) {
     return settings
 
 }
-function deletToSettings(settings, product) {
+// Crée un élément div qui contiendra les options de l'élément du panier (quantité, suppression)
+function deletToSettings (settings, product) {
     const div = document.createElement("div")
     div.classList.add("cart__item__content__settings__delete")
     div.addEventListener("click", () => {
@@ -102,25 +102,23 @@ function deletToSettings(settings, product) {
 
 
 }
-function deleteProduct(id, color) {
+function deleteProduct (id, color,) {
     let cart = JSON.parse(localStorage.getItem('product') || "[]");
 
 
     // Trouve l'index du produit à supprimer dans le tableau du panier
-    const index = cart.findIndex(item => item.id === id && item.color === color);
-    // Supprime le produit du tableau du panier
+    const index = cart.findIndex(item => item._id === id && item.color === color);
+  
     cart.splice(index, 1);
 
-    // Mettre à jour le panier dans le stockage local
+   
     localStorage.setItem("product", JSON.stringify(cart));
-    location.reload(); //Permet de update le total 
-
-
+    location.reload()
 }
 
 
 
-function quantityToSettings(settings, product) {
+function quantityToSettings (settings, product) {
 
     const quantity = document.createElement("div")
     quantity.classList.add("cart__item__content__settings__quantity")
@@ -138,8 +136,8 @@ function quantityToSettings(settings, product) {
 
     input.addEventListener("input", () => {
 
-        updateQuantity(product._id, parseInt(input.value), product.color)
-        updatePrice()
+        updateQuantity (product._id, parseInt(input.value), product.color)
+        updatePrice ()
     })
 
     quantity.appendChild(input)
@@ -147,8 +145,8 @@ function quantityToSettings(settings, product) {
     return settings
 }
 
-
-function updateQuantity(id, newQuantity, color) {
+//Mise à jour la quantité de l'article dans le tableau "cart" en utilisant la méthode "find" 
+function updateQuantity (id, newQuantity, color) {
 
     const item = cart.find(item => item._id === id);
     item.quantity = newQuantity;
@@ -157,7 +155,7 @@ function updateQuantity(id, newQuantity, color) {
     updateQuantityInLocalStorage(id, newQuantity, color)
 }
 
-function updateQuantityInLocalStorage(id, newQuantity, color) {
+function updateQuantityInLocalStorage (id, newQuantity, color) {
     let cart = JSON.parse(localStorage.getItem('product') || "[]");
     cart = cart.map(item => {
         if (item.id === id && item.color === color) {
@@ -175,13 +173,13 @@ function updateQuantityInLocalStorage(id, newQuantity, color) {
 
 
 
-
-function updatePrice() {
+//Mise à jour du prix total de la commande en utilisant la méthode "reduce" sur le tableau "cart"
+function updatePrice () {
     totalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0); //function accumulateur
     document.querySelector("#totalPrice").textContent = totalPrice;
 }
 
-function makeArticle(product) {
+function makeArticle (product) {
     const article = document.createElement("article");
     article.classList.add("card__item")
     article.dataset.id = product.id;
@@ -189,7 +187,7 @@ function makeArticle(product) {
     return article
 }
 
-function makeDivImage(product) {
+function makeDivImage (product) {
     const div = document.createElement("div")
     div.classList.add("cart__item__img")
 
@@ -223,7 +221,7 @@ function submit(e) {
 
 
      const body = makeRequestBody() 
-
+//Envoi la requête HTTP "POST" à l'URL 
     fetch("http://localhost:3000/api/products/order", {
         method: "POST",
         body: JSON.stringify(body),
@@ -243,8 +241,8 @@ function submit(e) {
      })
      .catch((err) => console.log(err));
 }
-
-  function formInvalid() {
+//Vérifie si tous les champs du formulaire sont remplis.
+  function formInvalid () {
   const form = document.querySelector(".cart__order__form")
   const inputs = form.querySelectorAll("input");
   inputs.forEach((input) => {
@@ -257,20 +255,16 @@ function submit(e) {
   })
   }
 
-
+//Vérifie si l'email saisi est valide
   function emailInvalid () { 
    const email = document.querySelector("#email").value
-   const regex = /^[A-Za-z0-9+_.-]+@(.+)\.([A-Za-z]){1,}$/
-   if (regex.test(email) === false) {
-    alert("Veuillez saisir une adresse e-mail valide")
-    return true
-
-   }
-   return false
+   const regex = /^[A-Za-z0-9+_.-]+@(.+)\.([A-Za-z]){1,}$/;
+   regex.test(email) === false && alert('ok')
+   return regex.test(email) === false
    }
 
-
-function makeRequestBody() { 
+  //Création de l'objet "body" qui contient les informations de contact de la commande
+function makeRequestBody () { 
 
     const form = document.querySelector(".cart__order__form");
 
