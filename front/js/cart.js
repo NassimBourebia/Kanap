@@ -116,7 +116,7 @@ function deleteProduct (id, color) {
     
    
     localStorage.setItem("product", JSON.stringify(cart));
-     // location.reload()
+
      const { quantity, price } = cart.reduce((total, product) => ({
         quantity: total.quantity + product.quantity,
         price: total.price + product.price * product.quantity
@@ -191,7 +191,7 @@ function updatePrice () {
 
 function makeArticle (product) {
     const article = document.createElement("article");
-    article.classList.add("card__item")
+    article.classList.add("cart__item")
     article.dataset.id = product.id;
     article.dataset.id = product.color;
     return article
