@@ -106,13 +106,13 @@ function addOrder (color, quantity) {
     //Création d'un objet avec les données de la commande
     const objetData = {
 
-        id: id,
+        _id: id,
         color: color,
         quantity: parseInt(quantity),
     }
 
     //Recherche de l'index de l'objet de commande existant dans le tableau de produits
-    const index = products.findIndex((product) => product._id === objetData.id || product.color === objetData.color);
+    const index = products.findIndex((product) => product._id === objetData._id && product.color === objetData.color);
     if (index !== -1) {
         
         //Si l'objet existe déjà, la quantité est mise à jour

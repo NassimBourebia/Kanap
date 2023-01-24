@@ -5,7 +5,7 @@ let totalPrice = 0;
 // Récupère les produits du panier depuis l'API en utilisant l'ID stocké en localstorage
 async function getProductsCart (cart) {
     return await Promise.all(cart.map(async item => {
-        const id = item.id;
+        const id = item._id;
         // Fait une requête à l'API pour récupérer les informations sur le produit
         return await fetch(`http://localhost:3000/api/products/${id}`)
             .then(response => response.json())
@@ -40,7 +40,7 @@ function displayTotalQuantity (product) {
     totalPrice += product.price * product.quantity;
     document.querySelector("#totalQuantity").textContent = totalQuantity;
     document.querySelector("#totalPrice").textContent = totalPrice;
-
+   
 }
 
 function makeCartContent (product) {
@@ -66,7 +66,7 @@ function makeDescription (product) {
     const p = document.createElement("p")
     p.textContent = product.color;
     let pPrice = document.createElement("p")
-    pPrice.textContent = product.price;
+    pPrice.textContent = product.price + "€";
 
     description.appendChild(h2);
     description.appendChild(p);
@@ -89,9 +89,14 @@ function deletToSettings (settings, product) {
     const div = document.createElement("div")
     div.classList.add("cart__item__content__settings__delete")
     div.addEventListener("click", () => {
-        deleteProduct(product.id, product.color);
+        
+        const totalCart = deleteProduct(product._id, product.color);
         div.parentNode.parentNode.parentNode.remove(); 
-        updatePrice();
+        
+       
+        document.querySelector("#totalPrice").textContent = totalCart.price;
+        document.querySelector("#totalQuantity").textContent = totalCart.quantity;
+
     });
     
 
@@ -102,20 +107,25 @@ function deletToSettings (settings, product) {
 
 
 }
-function deleteProduct (id, color,) {
-    let cart = JSON.parse(localStorage.getItem('product') || "[]");
-
-
+function deleteProduct (id, color) {
+   
     // Trouve l'index du produit à supprimer dans le tableau du panier
     const index = cart.findIndex(item => item._id === id && item.color === color);
   
     cart.splice(index, 1);
-
+    
    
     localStorage.setItem("product", JSON.stringify(cart));
-    location.reload()
-}
+     // location.reload()
+     const { quantity, price } = cart.reduce((total, product) => ({
+        quantity: total.quantity + product.quantity,
+        price: total.price + product.price * product.quantity
+      }),
+      { quantity: 0, price: 0 }
+    );
 
+    return { quantity, price };
+}
 
 
 function quantityToSettings (settings, product) {
@@ -153,12 +163,12 @@ function updateQuantity (id, newQuantity, color) {
     totalQuantity = cart.reduce((total, item) => total + item.quantity, 0);
     document.querySelector("#totalQuantity").textContent = totalQuantity;
     updateQuantityInLocalStorage(id, newQuantity, color)
+    
 }
 
 function updateQuantityInLocalStorage (id, newQuantity, color) {
-    let cart = JSON.parse(localStorage.getItem('product') || "[]");
     cart = cart.map(item => {
-        if (item.id === id && item.color === color) {
+        if (item._id === id && item.color === color) {
             return {
                 ...item,
                 quantity: newQuantity
