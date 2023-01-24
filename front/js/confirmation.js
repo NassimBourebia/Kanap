@@ -11,6 +11,7 @@ function getorderId() {
 
 
 function displayOrderId (orderId) {
+   
     const orderIdElement = document.querySelector("#orderId")
     orderIdElement.textContent = orderId;
     window.localStorage.clear()
