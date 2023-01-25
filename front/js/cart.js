@@ -270,36 +270,64 @@ function submit(e) {
   }
 
 //Vérifie si l'email, prénom, nom, ville saisi est valide
+
+
   function emailInvalid () { 
+    
+   const emailError = document.querySelector("#emailErrorMsg"); 
    const email = document.querySelector("#email").value
    const regex = /^[A-Za-z0-9+_.-]+@(.+)\.([A-Za-z]){1,}$/;
-   regex.test(email) === false && alert('ok')
-   return regex.test(email) === false
-   }
-   function firstNameInvalid () {
 
+   if (regex.test(email) === false) {
+
+    emailError.textContent = "L'email n'est pas correctement saisie"
+    return regex.test(email) === false
+
+   }   
+ }
+
+
+   function firstNameInvalid () {
+     
+    const firstNameError = document.querySelector("#firstNameErrorMsg")
     const firstName = document.querySelector("#firstName").value
     const regex = /^[A-Za-z]+$/; 
-    regex.test(firstName) === false && alert("Le prénom ne doit pas contenir de chiffres")
-    return regex.test(firstName) === false
+
+    if(regex.test(firstName) === false){
+
+     firstNameError.textContent = "Le prénom ne doit pas contenir de chiffres";
+     return regex.test(firstName) === false
+
+    }   
    }
+
+
    function lastNameInvalid () {
 
+    const lastNameError = document.querySelector("#lastNameErrorMsg")
     const lastName = document.querySelector("#lastName").value
     const regex = /^[A-Za-z]+$/; 
-    regex.test(lastName) === false && alert("Le nom ne doit pas contenir de chiffres")
-    return regex.test(lastName) === false
 
+    if(regex.test(lastName) === false) {
 
+     lastNameError.textContent = "Le nom ne doit pas contenir de chiffres"; 
+     return regex.test(lastName) === false
+
+    }
    }
-
+   
    function cityInvalid () {
-
+    
+    const cityError = document.querySelector("#cityErrorMsg");
     const city = document.querySelector("#city").value
     const regex = /^[A-Za-z]+$/; 
-    regex.test(city) === false && alert("La ville ne doit pas contenir de chiffres")
-    return regex.test(city) === false
 
+    if(regex.test(city) === false){
+
+      cityError.textContent ="La ville ne doit pas contenir de chiffres"; 
+      return regex.test(city) === false  
+    }
+    
 
    }
 
