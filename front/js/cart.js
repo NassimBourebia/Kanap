@@ -84,6 +84,7 @@ function makeSettings (product) {
     return settings
 
 }
+
 // Crée un élément div qui contiendra les options de l'élément du panier (quantité, suppression)
 function deletToSettings (settings, product) {
     const div = document.createElement("div")
@@ -99,14 +100,13 @@ function deletToSettings (settings, product) {
 
     });
     
-
     const p = document.createElement("p")
     p.textContent = "Supprimer";
     div.appendChild(p)
     settings.appendChild(div)
-
-
 }
+
+
 function deleteProduct (id, color) {
    
     // Trouve l'index du produit à supprimer dans le tableau du panier
@@ -212,27 +212,25 @@ function makeDivImage (product) {
 
  //FORM
 const orderButton = document.querySelector('#order'); 
-
-
-
 orderButton.addEventListener("click", (e) => submit(e))
 
 function submit(e) { 
     
     e.preventDefault()
     if (cart.length === 0) {
-    alert("merci de sélectionner des produits dans votre panier avant de passer commande")
+    alert("merci de sélectionner des produits dans votre panier avant de passer commande") // Affiche un message d'erreur si le panier est vide et arrête l'exécution de la fonction
     return
     
     }
-   
+   // Vérifie si les différents champs du formulaire sont valides. Si un des champs n'est pas valide, la fonction s'arrête
+    
    if  (formInvalid ()) return
    if (emailInvalid ()) return
    if (firstNameInvalid ()) return
    if (lastNameInvalid ()) return
    if (cityInvalid ()) return
-
-
+   
+  
 
      const body = makeRequestBody() 
 //Envoi la requête HTTP "POST" à l'URL 
@@ -242,9 +240,7 @@ function submit(e) {
         headers: {
 
              "Content-Type": "application/json"
-        } 
-       
-        
+        }     
      })
      .then((res) => res.json())
      .then((data) => {

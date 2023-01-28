@@ -3,6 +3,7 @@
 fetch('http://localhost:3000/api/products/')
   .then(response => response.json())
   .then((data) => addProducts(data))
+  .catch(err=> alert("L'accès à l'API est indisponible"));
 
 
 // Fonction pour ajouter les produits à la page 
@@ -15,7 +16,7 @@ function addProducts(data) {
 
     // Crée les éléments de la page en utilisant des fonctions dédiées
     const image = makeImage (imageUrl, altTxt);
-    const anchor = makeAnchor (_id);
+    const anchor = makeAnchor (_id);  
     const article = document.createElement ("article");
     const h3 = makeH3 (name)
     const paragraph = makeParagraph (description)
@@ -61,7 +62,6 @@ function makeParagraph (description) {
   paragraph.textContent = description;
   paragraph.classList.add("productDescription");
   return paragraph;
-
 }
 
 
