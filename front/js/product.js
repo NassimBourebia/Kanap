@@ -98,14 +98,16 @@ function clickOnButton() {
     //Sinon, la fonction "addOrder" est exécutée avec les valeurs sélectionnées pour la couleur et la quantité
     addOrder(color, quantity)
 
-    //La page est redirigée vers la page "cart.html"
-    goToCartPage()
+    
 }
 
 
 //Fonction pour ajouter l'objet de commande au localStorage
 function addOrder(color, quantity) {
     //Création d'un objet avec les données de la commande
+    if(quantity<0 || quantity>100){
+        return alert("The quantity must be between 0 and 100")
+    } 
     const objetData = {
 
         _id: id,
@@ -127,6 +129,9 @@ function addOrder(color, quantity) {
 
     localStorage.setItem('product', JSON.stringify(products));
 
+    //La page est redirigée vers la page "cart.html"
+    goToCartPage()
+
 }
 
 
@@ -141,10 +146,6 @@ function orderValid(color, quantity) {
 
 
 function goToCartPage() { window.location.href = "cart.html"; }
-
-
-
-
 
 
 

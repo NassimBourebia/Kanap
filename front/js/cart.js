@@ -104,27 +104,28 @@ function deletToSettings (settings, product) {
     p.textContent = "Supprimer";
     div.appendChild(p)
     settings.appendChild(div)
+
 }
 
 
 function deleteProduct (id, color) {
-   
+    
     // Trouve l'index du produit à supprimer dans le tableau du panier
     const index = cart.findIndex(item => item._id === id && item.color === color);
   
     cart.splice(index, 1);
     
-   
-    localStorage.setItem("product", JSON.stringify(cart));
-
      const { quantity, price } = cart.reduce((total, product) => ({
         quantity: total.quantity + product.quantity,
         price: total.price + product.price * product.quantity
       }),
       { quantity: 0, price: 0 }
     );
-
+     let newCart = cart.map(item => ({ _id: item._id, color : item.color, quantity : item.quantity}))
+     localStorage.setItem("product", JSON.stringify(newCart));
+    
     return { quantity, price };
+
 }
 
 
@@ -145,6 +146,11 @@ function quantityToSettings (settings, product) {
     input.value = product.quantity
 
     input.addEventListener("input", () => {
+
+        if(input.value<0 || input.value>100){
+            input.value < 0 ? input.value = 1 : input.value > 100 ? input.value = 100 : input.value=product.quantity;
+            return alert("The quantity must be between 0 and 100")
+        }
 
         updateQuantity (product._id, parseInt(input.value), product.color)
         updatePrice ()
@@ -167,7 +173,8 @@ function updateQuantity (id, newQuantity, color) {
 }
 
 function updateQuantityInLocalStorage (id, newQuantity, color) {
-    cart = cart.map(item => {
+    let product = JSON.parse(localStorage.getItem("product"));
+    product = product.map(item => {
         if (item._id === id && item.color === color) {
             return {
                 ...item,
@@ -177,9 +184,10 @@ function updateQuantityInLocalStorage (id, newQuantity, color) {
         return item
     });
     
-    localStorage.setItem("product", JSON.stringify(cart));
+    localStorage.setItem("product", JSON.stringify(product));
 
 }
+
 
 
 
@@ -350,6 +358,3 @@ function makeRequestBody () {
    
     return body
 }
-
-
-
